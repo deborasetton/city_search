@@ -1,4 +1,4 @@
-class CitySearch
+class CitySearchService
   DEFAULT_RADIUS_KM = 10_000_000 # km
   DEFAULT_LIMIT = 25
 

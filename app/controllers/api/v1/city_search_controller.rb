@@ -10,7 +10,7 @@ module API
           return
         end
 
-        @suggestions = CitySearch.call(
+        @suggestions = CitySearchService.call(
           {
             query: params[:q],
             latitude: params[:latitude],
