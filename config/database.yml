@@ -56,7 +56,7 @@ development: &development_default
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
+  <<: *development_default
   database: city_search_test
 
 # As with config/credentials.yml, you never want to store sensitive information,

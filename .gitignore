@@ -17,3 +17,9 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# dotenv
+.env
+.env.development
+.env.test
+.env.production
