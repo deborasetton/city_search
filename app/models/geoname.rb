@@ -25,7 +25,7 @@ class Geoname < ApplicationRecord
 
   scope :by_alternate_name, -> (tokens) do
     clauses = tokens.map do |token|
-      "alternate_names.search_vector LIKE ?"
+      "alternate_names.alternate_name LIKE ?"
     end
 
     wildcards = tokens.map { |token| "%#{token}%" }
