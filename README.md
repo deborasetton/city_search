@@ -13,7 +13,7 @@ The API contains a single endpoint, `suggestions`, which finds and scores
 cities and returns the results in decreasing order of score.
 
 For a description of the API, please see the
-[API documentation](https://app.swaggerhub.com/apis-docs/deborasetton/city_search_2/1.0.0).
+[API documentation](https://app.swaggerhub.com/apis-docs/setton/city_search/0.0.1).
 
 ## Scoring algorithm overview
 
