@@ -6,7 +6,7 @@ A live demo is available at: https://co-city-search.herokuapp.com/
 
 ## General description
 
-This is a Ruby on Rails API application which uses PostgreSQL as database
+This is a Ruby on Rails API application which uses PostgreSQL for the database
 (it requires the PostGIS and citext extensions).
 
 The API contains a single endpoint, `suggestions`, which finds and scores
@@ -23,7 +23,7 @@ is assigned a relative score between 0 and 1, which is the weighted average of
 the following sub-scores:
 
 1) **String similarity to the search text:** the closer the search text matches
-the candidates's "name", the higher this score will be. For example, if the search text
+the candidate's "name", the higher this score will be. For example, if the search text
 is "Mont", "Montréal" will score higher than  "Sainte-Anne-des-Monts".
 
     - The candidate's name considered for matching can be:
@@ -31,7 +31,7 @@ is "Mont", "Montréal" will score higher than  "Sainte-Anne-des-Monts".
         - an alternate name; or
         - a search vector string which includes the county
       and state/province names
-    - Comparisons are case-insenstive
+    - Comparisons are case-insensitive
     - Comparisons are performed using the ASCII-equivalent of a term. For example, "Montréal" would be converted to "Montreal" prior to matching
     - Currently, the similarity score is given by the [Jaro-Winkler distance](https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance)
       between the strings. More sophisticated methods for comparison could be
@@ -67,16 +67,16 @@ In order to avoid having to run the scoring algorithm for all possible locations
 The only dependencies are `docker` and `docker-compose`.
 
 ```bash
-# Rails API
+# Build Docker images
 cp .env.example .env
 docker-compose build api
 
-# This command will print you development API token. You will need this token
+# This command will print your development API token. You will need this token
 # to issue API requests.
 docker-compose run --rm api bash -c 'bin/setup'
 
 # This will start the Rails server on port 3000.
-# You can access the application on http://localhost:3000/api/v1/suggestions?q=lon
+# You can now try out the app by accessing http://localhost:3000/api/v1/suggestions?q=lon
 docker-compose up
 ```
 
