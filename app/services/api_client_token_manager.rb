@@ -1,8 +1,10 @@
 class APIClientTokenManager
+  APIClientToken = Struct.new(:value, :expires_at)
+
   class << self
-    def generate_token(user, expires_at = nil)
+    def generate_token(api_client, expires_at = nil)
       expires_at ||= default_expires_at
-      payload = { id: user.id, expires_at: expires_at }
+      payload = { id: api_client.id, expires_at: expires_at }
       token = JWT.encode(payload, ENV.fetch('JWT_SECRET'), 'HS256')
       APIClientToken.new(token, expires_at)
     end

@@ -1,0 +1,2 @@
+class SecondLevelDivision < ApplicationRecord
+end

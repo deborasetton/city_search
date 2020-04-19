@@ -1,25 +1,48 @@
 module API
   module V1
     class CitySearchController < APIController
-      MIN_QUERY_SIZE = 3
+      before_action :validate_params
+
+      # A coordinate point is invalid if it contains anything other than
+      # digits, a decimal point ('.') and a minus sign ('-').
+      INVALID_COORDINATE_REGEX = /[^\-\.\d]/
 
       def suggestions
-        if params[:q].blank? || params[:q].size < MIN_QUERY_SIZE
-          @error = APIError.new(422, 'Invalid query', "Query length must be greater than #{MIN_QUERY_SIZE - 1}")
-          render :error
-          return
+        return if has_errors?
+
+        search_params = {
+          query: params[:q],
+          latitude: params[:latitude] && params[:latitude].to_f,
+          longitude: params[:longitude] && params[:longitude].to_f,
+          country: params[:country],
+          state: params[:state]
+        }.compact
+
+        @suggestions = CitySearch.new(search_params).call
+      end
+
+      private
+
+      def validate_params
+        if params[:q].blank? || params[:q].size < Config::MIN_QUERY_SIZE
+          add_api_error(:invalid_query, min_length: Config::MIN_QUERY_SIZE)
         end
 
-        @suggestions = CitySearchService.call(
-          {
-            query: params[:q],
-            latitude: params[:latitude],
-            longitude: params[:longitude],
-            country: params[:country],
-            state: params[:state]
-          }.compact)
+        if params[:latitude] && (
+            params[:latitude] =~ INVALID_COORDINATE_REGEX ||
+            params[:latitude].to_f.abs > 90)
 
-        render 'suggestions'
+          add_api_error(:invalid_latitude)
+        end
+
+        if params[:longitude] && (
+            params[:longitude] =~ INVALID_COORDINATE_REGEX ||
+            params[:longitude].to_f.abs > 180)
+
+          add_api_error(:invalid_longitude)
+        end
+
+        render 'api/v1/errors' if has_errors?
       end
     end
   end

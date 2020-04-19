@@ -3,6 +3,12 @@ class Ranking
   POPULATION_WEIGHT = 0.1
   DISTANCE_WEIGHT = 0.5
 
+  ALTERNATE_BOOST_PRIMARY = 1
+  ALTERNATE_BOOST_ALTERNATE = 0.5
+  ALTERNATE_BOOST_HIERARCHY = 0.1
+
+  DISTANCE_BOOST_DECAY = 0.1
+
   def initialize(matches)
     @matches = matches
   end
@@ -23,33 +29,23 @@ class Ranking
   def score_matches!
     return if @scored || @matches.empty?
 
-    if @matches.first.distance
-      @matches.each do |search_match|
-        search_match.explain_score = {
-          similarity: search_match.similarity_score,
-          alternate_penalty: alternate_penalty(search_match),
-          population_boost: population_boost(search_match.population),
-          distance_boost: distance_boost(search_match.distance),
-          distance: search_match.distance / 1_000
-        }
+    @matches.each do |search_match|
+      search_match.explain_score = {
+        similarity: search_match.similarity_score,
+        alternate_boost: alternate_boost(search_match),
+        population_boost: population_boost(search_match.population),
+        distance_boost: search_match.distance && distance_boost(search_match.distance),
+        distance: search_match.distance && search_match.distance / 1_000
+      }.compact
 
+      if search_match.distance
         search_match.score =
-          SIMILARITY_WEIGHT * search_match.similarity_score * alternate_penalty(search_match) +
+          SIMILARITY_WEIGHT * search_match.similarity_score * alternate_boost(search_match) +
           POPULATION_WEIGHT * population_boost(search_match.population) +
           DISTANCE_WEIGHT * distance_boost(search_match.distance)
-      end
-    else
-      @matches.each do |search_match|
-        puts search_match.search_vector
-
-        search_match.explain_score = {
-          similarity: search_match.similarity_score,
-          alternate_penalty: alternate_penalty(search_match),
-          population_boost: population_boost(search_match.population)
-        }
-
+      else
         search_match.score =
-          2 * SIMILARITY_WEIGHT * search_match.similarity_score * alternate_penalty(search_match) +
+          2 * SIMILARITY_WEIGHT * search_match.similarity_score * alternate_boost(search_match) +
           2 * POPULATION_WEIGHT * population_boost(search_match.population)
       end
     end
@@ -57,12 +53,12 @@ class Ranking
     @scored = true
   end
 
-  def alternate_penalty(match)
+  def alternate_boost(match)
     case match.matched_field
-    when :primary_name then 1
-    when :secondary_name then 0.5
-    when :hierarchy then 0.1
-    else raise "Invalid: #{match.matched_field.inspect}"
+    when :primary_name   then ALTERNATE_BOOST_PRIMARY
+    when :alternate_name then ALTERNATE_BOOST_ALTERNATE
+    when :hierarchy      then ALTERNATE_BOOST_HIERARCHY
+    else raise "Invalid matched_field: #{match.matched_field.inspect}"
     end
   end
 
@@ -72,8 +68,7 @@ class Ranking
   end
 
   def distance_boost(distance)
-    distance == 0 ? 1 : 1 / ((distance.to_f)**0.1)
-    #(distance - min_distance) / (max_distance - min_distance).to_f
+    distance == 0 ? 1.0 : (1.0 / (distance**DISTANCE_BOOST_DECAY))
   end
 
   def min_population

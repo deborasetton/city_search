@@ -1,0 +1,2 @@
+class FirstLevelDivision < ApplicationRecord
+end
