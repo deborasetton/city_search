@@ -19,11 +19,11 @@ class Geoname < ApplicationRecord
   end
 
   scope :by_name, -> (tokens) do
-    full_text_query(tokens, 'ascii_name')
+    full_text_query(tokens, 'geonames.ascii_name')
   end
 
   scope :by_search_vector, -> (tokens) do
-    full_text_query(tokens, 'search_vector')
+    full_text_query(tokens, 'geonames.search_vector')
   end
 
   scope :by_alternate_name, -> (tokens) do
@@ -54,7 +54,7 @@ class Geoname < ApplicationRecord
     tokens = [
       name,
       second_level_division&.name,
-      first_level_division&.name,
+      first_level_division&.abbreviation,
       country
     ].compact
 

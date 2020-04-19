@@ -35,13 +35,21 @@ en:
       errors:
         invalid_latitude:
           status: 422
-          title: invalid_latitude
+          identifier: invalid_latitude
           description: "Latitude must be a floating point number between -90 and 90 (inclusive)"
         invalid_longitude:
           status: 422
-          title: invalid_longitude
+          identifier: invalid_longitude
           description: "Longitude must be a floating point number between -180 and 180 (inclusive)"
         invalid_query:
           status: 422
-          title: invalid_query
+          identifier: invalid_query
           description: "Query length must be greater than or equal to %{min_length}"
+        invalid_radius:
+          status: 422
+          identifier: invalid_radius
+          description: "Radius must be an integer number greater than 0"
+        invalid_limit:
+          status: 422
+          identifier: invalid_limit
+          description: "Limit must be a number greater than 0"

@@ -1,9 +1,9 @@
 class Ranking
   SIMILARITY_WEIGHT = 0.4
   POPULATION_WEIGHT = 0.1
-  DISTANCE_WEIGHT = 0.5
+  DISTANCE_WEIGHT   = 0.5
 
-  ALTERNATE_BOOST_PRIMARY = 1
+  ALTERNATE_BOOST_PRIMARY   = 1.0
   ALTERNATE_BOOST_ALTERNATE = 0.5
   ALTERNATE_BOOST_HIERARCHY = 0.1
 
@@ -31,21 +31,21 @@ class Ranking
 
     @matches.each do |search_match|
       search_match.explain_score = {
-        similarity: search_match.similarity_score,
+        similarity: similarity_score(search_match),
         alternate_boost: alternate_boost(search_match),
         population_boost: population_boost(search_match.population),
         distance_boost: search_match.distance && distance_boost(search_match.distance),
-        distance: search_match.distance && search_match.distance / 1_000
+        distance: search_match.distance && search_match.distance
       }.compact
 
       if search_match.distance
         search_match.score =
-          SIMILARITY_WEIGHT * search_match.similarity_score * alternate_boost(search_match) +
+          SIMILARITY_WEIGHT * similarity_score(search_match) * alternate_boost(search_match) +
           POPULATION_WEIGHT * population_boost(search_match.population) +
           DISTANCE_WEIGHT * distance_boost(search_match.distance)
       else
         search_match.score =
-          2 * SIMILARITY_WEIGHT * search_match.similarity_score * alternate_boost(search_match) +
+          2 * SIMILARITY_WEIGHT * similarity_score(search_match) * alternate_boost(search_match) +
           2 * POPULATION_WEIGHT * population_boost(search_match.population)
       end
     end
@@ -60,6 +60,10 @@ class Ranking
     when :hierarchy      then ALTERNATE_BOOST_HIERARCHY
     else raise "Invalid matched_field: #{match.matched_field.inspect}"
     end
+  end
+
+  def similarity_score(match)
+    StringSimilarity.call(match.search_vector, match.normalized_query.join)
   end
 
   def population_boost(population)

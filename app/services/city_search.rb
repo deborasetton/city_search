@@ -15,21 +15,23 @@ class CitySearch
 
     scope.by_name(tokens).each do |record|
       next if matches[record.id]
-      matches[record.id] = SearchMatch.new(tokens, record.ascii_name, record, :primary_name)
+      matches[record.id] = SearchMatch.new(tokens, record.ascii_name, record, :primary_name, distance(record))
     end
 
     scope.by_alternate_name(tokens).each do |record|
       next if matches[record.id]
-      matches[record.id] = SearchMatch.new(tokens, record.alternate_name, record, :alternate_name)
+      matches[record.id] = SearchMatch.new(tokens, record.alternate_name, record, :alternate_name, distance(record))
     end
 
     scope.by_search_vector(tokens).each do |record|
       next if matches[record.id]
-      matches[record.id] = SearchMatch.new(tokens, record.search_vector, record, :hierarchy)
+      matches[record.id] = SearchMatch.new(tokens, record.search_vector, record, :hierarchy, distance(record))
     end
 
     Ranking.new(matches.values).take(params[:limit] || Config::DEFAULT_LIMIT)
   end
+
+  private
 
   def set_fields(scope)
     scope.select(
@@ -59,10 +61,17 @@ class CitySearch
         params[:latitude],
         params[:longitude],
         params[:radius_km] || Config::DEFAULT_RADIUS_KM)
-    else
-      scope = scope.select('NULL AS distance')
     end
 
     scope
+  end
+
+  def distance(record)
+    return unless params[:latitude] && params[:longitude]
+
+    Geocoder::Calculations.distance_between(
+      [params[:latitude],params[:longitude]],
+      [record.latitude, record.longitude],
+      units: :km)
   end
 end

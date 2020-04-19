@@ -23,6 +23,20 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
 
 
+--
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
 SET default_tablespace = '';
 
 --
@@ -94,7 +108,8 @@ CREATE TABLE public.first_level_divisions (
     id character varying NOT NULL,
     name character varying,
     ascii_name character varying,
-    geoname_id integer
+    geoname_id integer,
+    abbreviation text
 );
 
 
