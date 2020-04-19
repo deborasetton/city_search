@@ -1,3 +1,6 @@
+# Configuration options for the application.
+# Each configuration has a default value which can be alteres through
+# environment variables.
 module Config
   PREFIX = 'CITY_SEARCH'
 

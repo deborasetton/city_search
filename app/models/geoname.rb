@@ -32,7 +32,7 @@ class Geoname < ApplicationRecord
     end
 
     wildcards = tokens.map { |token| "%#{token}%" }
-    joins(:alternate_names).where(clauses.join('OR '), *wildcards).select('alternate_names.alternate_name AS alternate_name')
+    joins(:alternate_names).where(clauses.join('AND '), *wildcards).select('alternate_names.alternate_name AS alternate_name')
   end
 
   def self.full_text_query(tokens, text_column)
@@ -41,7 +41,7 @@ class Geoname < ApplicationRecord
     end
 
     wildcards = tokens.map { |token| "%#{token}%" }
-    where(clauses.join('OR '), *wildcards)
+    where(clauses.join('AND '), *wildcards)
   end
 
   def self.sanitized_distance(lat, lng)

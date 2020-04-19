@@ -1,0 +1,152 @@
+openapi: 3.0.0
+servers:
+  - url: https://co-city-search.herokuapp.com/api/v1
+    description: Demo server (Heroku)
+info:
+  description: |
+    Welcome to the City Search API! This API contains a single endpoint, `suggestions`, which you can use to search the largest cities in Canada and United States.
+
+    ## API conventions
+
+    The City Search API is a RESTful API that communicates using JSON (JavaScript Object Notation).
+
+    ### Response format
+
+    Responses are always returned in JSON, regardless of request headers.
+
+    ### Authentication
+
+    The `suggestions` endpoint requires authentication via the `Authorization` header, in which you must provide a valid access token.
+
+    ### HTTP status codes
+
+    The City Search API uses the following HTTP status codes to communicate the success or failure of requests:
+
+    Status | Meaning
+    --------- | -------
+    200 | The request has succeeded
+    401 | The request could not be authenticated. This usually indicates a missing `Authentication` header or an expired token
+    422 | The request could not be processed due to validation errors, which will be detailed in the response body
+
+  version: "1.0.0"
+  title: City Search API
+tags:
+  - name: search
+paths:
+  /suggestions:
+    get:
+      tags:
+        - search
+      parameters:
+        - in: query
+          name: q
+          description: Search term. Can contain spaces.
+          required: true
+          schema:
+            type: string
+            minLength: 3
+          examples:
+            partial_word:
+              value: Lond
+              summary: "Partial word"
+            complete_word:
+              value: London
+              summary: "Complete word"
+            contains_spaces:
+              value: "Las Vegas"
+              summary: "Term with spaces"
+        - in: query
+          name: latitude
+          description: If specified, results which are closest to this point will be considered more relevant.
+          schema:
+            type: number
+            format: float
+            minimum: -90.0
+            maximum: 90.0
+        - in: query
+          name: longitude
+          description: If specified, results which are closest to this point will be considered more relevant.
+          schema:
+            type: number
+            format: float
+            minimum: -180.0
+            maximum: 180.0
+        - in: query
+          name: radius_km
+          description: If specified, only results which are within the given radius will be returned.
+          schema:
+            type: number
+        - in: query
+          name: country
+          description: Country abbreviation. Currently, the only supported values are 'CA' and 'US'.
+          schema:
+            type: string
+            enum:
+              - CA
+              - US
+        - in: query
+          name: state_or_province
+          description: State or province abbreviation. Currently, the only supported values are abbreviations for US states or Canadian provinces.
+          schema:
+            type: string
+          examples:
+            blank:
+              value: null
+              summary: 'Blank'
+            QC:
+              value: 'QC'
+              summary: 'QC (Québec)'
+            BC:
+              value: 'BC'
+              summary: 'QC (British Columbia)'
+            NY:
+              value: 'NY'
+              summary: 'NY (New York)'
+        - in: query
+          name: limit
+          schema:
+            type: number
+            default: 10
+        - in: query
+          name: explain_score
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Cities matching criteria, sorted by score
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SearchResult:
+      type: object
+      required:
+        - name
+        - score
+        - latitude
+        - longitude
+      properties:
+        name:
+          type: string
+          example: "Montréal, QC, CA"
+        score:
+          type: number
+          example: 0.4
+        latitude:
+          type: number
+          example: 87.999999
+        longitude:
+          type: number
+          example: 43.9999
+security:
+  - bearerAuth: []

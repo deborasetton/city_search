@@ -5,3 +5,11 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+api_client = APIClient.where(name: 'development_api_client').first_or_create!
+
+token = APIClientTokenManager.generate_token(api_client)
+
+puts '==================='
+puts "---> Your API token is: #{token.value}"
+puts '==================='
