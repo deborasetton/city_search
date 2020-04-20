@@ -8,7 +8,7 @@ info:
 
     ## API conventions
 
-    The City Search API is a RESTful API that communicates using JSON (JavaScript Object Notation).
+    The City Search API is a RESTful API that communicates using JSON.
 
     ### Response format
 
@@ -28,7 +28,7 @@ info:
     401 | The request could not be authenticated. This usually indicates a missing `Authentication` header or an expired token
     422 | The request could not be processed due to validation errors, which will be detailed in the response body
 
-  version: "1.0.0"
+  version: "0.0.1"
   title: City Search API
 tags:
   - name: search
@@ -46,12 +46,12 @@ paths:
             type: string
             minLength: 3
           examples:
-            partial_word:
-              value: Lond
-              summary: "Partial word"
             complete_word:
               value: London
               summary: "Complete word"
+            partial_word:
+              value: Lond
+              summary: "Partial word"
             contains_spaces:
               value: "Las Vegas"
               summary: "Term with spaces"
@@ -98,7 +98,7 @@ paths:
               summary: 'QC (Québec)'
             BC:
               value: 'BC'
-              summary: 'QC (British Columbia)'
+              summary: 'BC (British Columbia)'
             NY:
               value: 'NY'
               summary: 'NY (New York)'

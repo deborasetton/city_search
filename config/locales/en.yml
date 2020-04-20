@@ -33,6 +33,10 @@ en:
   api:
     v1:
       errors:
+        unauthorized:
+          status: 401
+          identifier: unauthorized
+          description: "Missing or invalid authentication token"
         invalid_latitude:
           status: 422
           identifier: invalid_latitude

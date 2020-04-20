@@ -1,4 +1,4 @@
-json.prettify!
+json.prettify! if params[:pretty] == 'true'
 
 json.suggestions @suggestions do |search_match|
   json.name      search_match.display_name

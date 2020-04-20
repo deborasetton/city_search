@@ -21,7 +21,7 @@ module API
         end
 
         unless @current_user
-          add_error(APIError.new(401, 'Unauthorized', 'Missing or invalid authentication token'))
+          add_api_error(:unauthorized)
           render 'api/v1/errors', status: :unauthorized
         end
       end
