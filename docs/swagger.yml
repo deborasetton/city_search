@@ -107,11 +107,21 @@ paths:
           schema:
             type: number
             default: 10
+            maximum: 100
         - in: query
           name: explain_score
           schema:
             type: boolean
             default: false
+        - in: query
+          name: pretty
+          schema:
+            type: boolean
+            default: false
+            description: Pretty-print JSON response
+          examples:
+            pretty:
+              value: true
       responses:
         '200':
           description: Cities matching criteria, sorted by score

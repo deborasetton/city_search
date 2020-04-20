@@ -23,20 +23,6 @@ CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
 
 
---
--- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
-
-
---
--- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
-
-
 SET default_tablespace = '';
 
 --
@@ -53,7 +39,8 @@ CREATE TABLE public.alternate_names (
     extra3 text,
     extra4 text,
     extra5 text,
-    extra6 text
+    extra6 text,
+    search_vector text
 );
 
 
